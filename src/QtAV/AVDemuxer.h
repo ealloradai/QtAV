@@ -28,6 +28,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
+class MediaFilter;
+
 struct AVFormatContext;
 struct AVCodecContext;
 QT_BEGIN_NAMESPACE
@@ -187,6 +189,8 @@ public:
      */
     void setOptions(const QVariantHash &dict);
     QVariantHash options() const;
+
+    void setMediafilter(MediaFilter *mf);
 Q_SIGNALS:
     void unloaded();
     void userInterrupted(); //NO direct connection because it's emit before interrupted happens

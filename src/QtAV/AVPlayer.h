@@ -31,6 +31,8 @@
 #include <QtAV/VideoDecoder.h>
 #include <QtAV/AVError.h>
 
+class MediaFilter;
+
 QT_BEGIN_NAMESPACE
 class QIODevice;
 QT_END_NAMESPACE
@@ -516,6 +518,11 @@ public Q_SLOTS:
     void setContrast(int val);
     void setHue(int val);  //not implemented
     void setSaturation(int val);
+
+    /*!
+     * \brief Set Media filter in order to process SEI packets
+     */
+    void setMediaFilter(MediaFilter *mf);
 
 Q_SIGNALS:
     void bufferProgressChanged(qreal);

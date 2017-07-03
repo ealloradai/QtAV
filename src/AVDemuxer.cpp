@@ -32,6 +32,8 @@ typedef QTime QElapsedTimer;
 #include "utils/internal.h"
 #include "utils/Logger.h"
 
+#include "MediaFilter.h"
+
 namespace QtAV {
 static const char kFileScheme[] = "file:";
 
@@ -211,6 +213,7 @@ public:
         , seek_type(AccurateSeek)
         , dict(0)
         , interrupt_hanlder(0)
+        , mf(0)
     {}
     ~Private() {
         delete interrupt_hanlder;
@@ -316,6 +319,8 @@ public:
 
     AVDemuxer::InterruptHandler *interrupt_hanlder;
     QMutex mutex; //TODO: remove if load, read, seek is called in 1 thread
+
+    MediaFilter *mf;
 };
 
 AVDemuxer::AVDemuxer(QObject *parent)
@@ -484,6 +489,13 @@ bool AVDemuxer::readFrame()
     if (d->pkt.pts > qreal(duration())/1000.0) {
         d->max_pts = d->pkt.pts;
     }
+
+    //Demux have a good packet... pass it to media filter!
+    //media filter will emit to player in order to manage SEI infos
+    if (d->mf){
+        d->mf->processPacket(&(d->pkt));
+    }
+
     return true;
 }
 
@@ -1134,6 +1146,11 @@ void AVDemuxer::setOptions(const QVariantHash &dict)
 QVariantHash AVDemuxer::options() const
 {
     return d->options;
+}
+
+void AVDemuxer::setMediafilter(MediaFilter *mf)
+{
+    d->mf = mf;
 }
 
 void AVDemuxer::setMediaStatus(MediaStatus status)

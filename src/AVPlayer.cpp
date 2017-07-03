@@ -1646,4 +1646,9 @@ void AVPlayer::setSaturation(int val)
     }
 }
 
+void AVPlayer::setMediaFilter(MediaFilter *mf)
+{
+   d->demuxer.setMediafilter(mf);
+}
+
 } //namespace QtAV
