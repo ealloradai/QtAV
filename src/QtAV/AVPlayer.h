@@ -30,8 +30,7 @@
 #include <QtAV/Statistics.h>
 #include <QtAV/VideoDecoder.h>
 #include <QtAV/AVError.h>
-
-class MediaFilter;
+#include <QtAV/Packet.h>
 
 QT_BEGIN_NAMESPACE
 class QIODevice;
@@ -519,11 +518,6 @@ public Q_SLOTS:
     void setHue(int val);  //not implemented
     void setSaturation(int val);
 
-    /*!
-     * \brief Set Media filter in order to process SEI packets
-     */
-    void setMediaFilter(MediaFilter *mf);
-
 Q_SIGNALS:
     void bufferProgressChanged(qreal);
     void relativeTimeModeChanged();
@@ -540,6 +534,7 @@ Q_SIGNALS:
     void durationChanged(qint64);
     void error(const QtAV::AVError& e); //explictly use QtAV::AVError in connection for Qt4 syntax
     void paused(bool p);
+    void onPaketArrived(QtAV::Packet pkt);
     /*!
      * \brief started
      * Emitted when playback is started. Some functions that control playback should be called after playback is started, otherwise they won't work, e.g. setPosition(), pause(). stop() can be called at any time.

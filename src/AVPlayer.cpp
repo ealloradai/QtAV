@@ -83,6 +83,7 @@ AVPlayer::AVPlayer(QObject *parent) :
     connect(&d->demuxer, SIGNAL(mediaStatusChanged(QtAV::MediaStatus)), this, SLOT(updateMediaStatus(QtAV::MediaStatus)), Qt::DirectConnection);
     connect(&d->demuxer, SIGNAL(loaded()), this, SIGNAL(loaded()));
     connect(&d->demuxer, SIGNAL(seekableChanged()), this, SIGNAL(seekableChanged()));
+    connect(&d->demuxer, SIGNAL(paketArrived(QtAV::Packet)), this, SIGNAL(onPaketArrived(QtAV::Packet)));
     d->read_thread = new AVDemuxThread(this);
     d->read_thread->setDemuxer(&d->demuxer);
     //direct connection can not sure slot order?
@@ -1644,11 +1645,6 @@ void AVPlayer::setSaturation(int val)
     if (d->vthread) {
         d->vthread->setSaturation(val);
     }
-}
-
-void AVPlayer::setMediaFilter(MediaFilter *mf)
-{
-   d->demuxer.setMediafilter(mf);
 }
 
 } //namespace QtAV
