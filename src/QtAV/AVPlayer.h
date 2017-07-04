@@ -31,6 +31,7 @@
 #include <QtAV/VideoDecoder.h>
 #include <QtAV/AVError.h>
 #include <QtAV/Packet.h>
+#include <QtAV/AVDemuxer.h>
 
 QT_BEGIN_NAMESPACE
 class QIODevice;
@@ -393,6 +394,8 @@ public:
     MediaEndAction mediaEndAction() const;
     void setMediaEndAction(MediaEndAction value);
 
+    void setMediaFilter(cbPacket callback, void* userPtr);
+
 public Q_SLOTS:
     /*!
      * \brief load
@@ -534,7 +537,7 @@ Q_SIGNALS:
     void durationChanged(qint64);
     void error(const QtAV::AVError& e); //explictly use QtAV::AVError in connection for Qt4 syntax
     void paused(bool p);
-    void onPaketArrived(QtAV::Packet pkt);
+    void onPaketArrived(QtAV::Packet pkt); //asycronous and make a copy packet! Only for debug
     /*!
      * \brief started
      * Emitted when playback is started. Some functions that control playback should be called after playback is started, otherwise they won't work, e.g. setPosition(), pause(). stop() can be called at any time.

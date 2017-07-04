@@ -211,6 +211,8 @@ public:
         , seek_type(AccurateSeek)
         , dict(0)
         , interrupt_hanlder(0)
+        , mfCb(0)
+        , userOpaquePtr(0)
     {}
     ~Private() {
         delete interrupt_hanlder;
@@ -316,6 +318,9 @@ public:
 
     AVDemuxer::InterruptHandler *interrupt_hanlder;
     QMutex mutex; //TODO: remove if load, read, seek is called in 1 thread
+
+    cbPacket mfCb;
+    void *userOpaquePtr;
 };
 
 AVDemuxer::AVDemuxer(QObject *parent)
@@ -487,7 +492,11 @@ bool AVDemuxer::readFrame()
 
     //Demux have a good packet... pass it to media filter!
     //media filter will emit to player in order to manage SEI infos
-    Q_EMIT paketArrived(d->pkt);
+    Q_EMIT paketArrived(d->pkt); //asycronous and make a copy packet! Only for debug
+
+    if (d->pkt.hasKeyFrame && d->mfCb != NULL){
+        (d->mfCb)(&(d->pkt), d->userOpaquePtr);
+    }
 
     return true;
 }
@@ -1139,6 +1148,12 @@ void AVDemuxer::setOptions(const QVariantHash &dict)
 QVariantHash AVDemuxer::options() const
 {
     return d->options;
+}
+
+void AVDemuxer::setMediaFilter(cbPacket callback, void* userPtr)
+{
+    d->mfCb = callback;
+    d->userOpaquePtr = userPtr;
 }
 
 void AVDemuxer::setMediaStatus(MediaStatus status)

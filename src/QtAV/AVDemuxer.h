@@ -28,6 +28,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
+typedef int (*cbPacket)(QtAV::Packet *packet, void* userPtr);
+
 struct AVFormatContext;
 struct AVCodecContext;
 QT_BEGIN_NAMESPACE
@@ -187,6 +189,7 @@ public:
      */
     void setOptions(const QVariantHash &dict);
     QVariantHash options() const;
+    void setMediaFilter(cbPacket callback, void* userPtr);
 
 Q_SIGNALS:
     void unloaded();
@@ -198,7 +201,7 @@ Q_SIGNALS:
     void error(const QtAV::AVError& e); //explictly use QtAV::AVError in connection for Qt4 syntax
     void mediaStatusChanged(QtAV::MediaStatus status);
     void seekableChanged();
-    void paketArrived(QtAV::Packet pkt);
+    void paketArrived(QtAV::Packet pkt); //asycronous and make a copy packet! Only for debug
 private:
     void setMediaStatus(MediaStatus status);
     // error code (errorCode) and message (msg) may be modified internally

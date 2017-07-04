@@ -83,7 +83,7 @@ AVPlayer::AVPlayer(QObject *parent) :
     connect(&d->demuxer, SIGNAL(mediaStatusChanged(QtAV::MediaStatus)), this, SLOT(updateMediaStatus(QtAV::MediaStatus)), Qt::DirectConnection);
     connect(&d->demuxer, SIGNAL(loaded()), this, SIGNAL(loaded()));
     connect(&d->demuxer, SIGNAL(seekableChanged()), this, SIGNAL(seekableChanged()));
-    connect(&d->demuxer, SIGNAL(paketArrived(QtAV::Packet)), this, SIGNAL(onPaketArrived(QtAV::Packet)));
+    connect(&d->demuxer, SIGNAL(paketArrived(QtAV::Packet)), this, SIGNAL(onPaketArrived(QtAV::Packet))); //asycronous and make a copy packet! Only for debug
     d->read_thread = new AVDemuxThread(this);
     d->read_thread->setDemuxer(&d->demuxer);
     //direct connection can not sure slot order?
@@ -465,6 +465,11 @@ void AVPlayer::setMediaEndAction(MediaEndAction value)
     d->end_action = value;
     Q_EMIT mediaEndActionChanged(value);
     d->read_thread->setMediaEndAction(value);
+}
+
+void AVPlayer::setMediaFilter(cbPacket callback, void* userPtr)
+{
+    d->demuxer.setMediaFilter(callback, userPtr);
 }
 
 MediaEndAction AVPlayer::mediaEndAction() const
