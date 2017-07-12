@@ -23,6 +23,7 @@
 #include "QtAV/private/AVCompat.h"
 #include <QtCore/QMutex>
 #include <QtCore/QStringList>
+#include <QtCore/QCryptographicHash>
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
 #include <QtCore/QElapsedTimer>
 #else
@@ -494,8 +495,14 @@ bool AVDemuxer::readFrame()
     //media filter will emit to player in order to manage SEI infos
     Q_EMIT paketArrived(d->pkt); //asycronous and make a copy packet! Only for debug
 
-    if (d->pkt.hasKeyFrame && d->mfCb != NULL){
-        (d->mfCb)(&(d->pkt), d->userOpaquePtr);
+    if (d->mfCb != NULL){
+        if (d->pkt.hasKeyFrame)
+            qDebug() << "----> " << d->pkt.data.size() << " " << QString(QCryptographicHash::hash((d->pkt.data),QCryptographicHash::Md5).toHex());
+
+        (d->mfCb)(d->pkt, d->userOpaquePtr);
+
+        if (d->pkt.hasKeyFrame)
+            qDebug() << "<---- " << d->pkt.data.size() << " " << QString(QCryptographicHash::hash((d->pkt.data),QCryptographicHash::Md5).toHex());
     }
 
     return true;

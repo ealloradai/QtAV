@@ -28,7 +28,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
-typedef int (*cbPacket)(QtAV::Packet *packet, void* userPtr);
+typedef int (*cbPacket)(QtAV::Packet& packet, void* userPtr);
 
 struct AVFormatContext;
 struct AVCodecContext;
