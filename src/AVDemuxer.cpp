@@ -496,13 +496,7 @@ bool AVDemuxer::readFrame()
     Q_EMIT paketArrived(d->pkt); //asycronous and make a copy packet! Only for debug
 
     if (d->mfCb != NULL){
-        if (d->pkt.hasKeyFrame)
-            qDebug() << "----> " << d->pkt.data.size() << " " << QString(QCryptographicHash::hash((d->pkt.data),QCryptographicHash::Md5).toHex());
-
         (d->mfCb)(d->pkt, d->userOpaquePtr);
-
-        if (d->pkt.hasKeyFrame)
-            qDebug() << "<---- " << d->pkt.data.size() << " " << QString(QCryptographicHash::hash((d->pkt.data),QCryptographicHash::Md5).toHex());
     }
 
     return true;
