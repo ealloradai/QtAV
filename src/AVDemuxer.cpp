@@ -496,7 +496,7 @@ bool AVDemuxer::readFrame()
     Q_EMIT paketArrived(d->pkt); //asycronous and make a copy packet! Only for debug
 
     if (d->mfCb != NULL){
-        (d->mfCb)(d->pkt, d->userOpaquePtr);
+        (d->mfCb)(d->pkt, d->userOpaquePtr, d->format_ctx, d->stream);
     }
 
     return true;
